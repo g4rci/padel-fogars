@@ -1,0 +1,15 @@
+.date{
+  background-color: white;
+  text-align: center;
+  margin: 16px;
+  opacity: 0.9;
+}
+
+.reserva{
+    background-image: url('../../images/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    width: 100%;
+    height: 250%;
+  };

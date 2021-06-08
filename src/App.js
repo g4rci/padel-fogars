@@ -1,25 +1,106 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import {
+  Route,
+  BrowserRouter as Router,
+  Switch,
+  Redirect
+} from "react-router-dom";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+import { auth } from "./services/firebase";
+import Home from "./pages/home/Home";
+import Navigation from './components/navbar/Navbar';
+import Contact from './pages/contact/Contact';
+import Reservation from './pages/reservation/Reservation'
 
-function App() {
+function PrivateRoute({ component: Component, authenticated, ...rest }) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Route
+      {...rest}
+      render={props =>
+        authenticated === true ? (
+          <Component {...props} />
+        ) : (
+            <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }}
+            />
+          )
+      }
+    />
   );
+}
+
+function PublicRoute({ component: Component, authenticated, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        authenticated === false ? (
+          <Component {...props} />
+        ) : (
+            <Redirect to="/" />
+          )
+      }
+    />
+  );
+}
+
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      authenticated: false,
+      loading: true
+    };
+  }
+
+  componentDidMount() {
+    auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({
+          authenticated: true,
+          loading: false
+        });
+      } else {
+        this.setState({
+          authenticated: false,
+          loading: false
+        });
+      }
+    });
+  }
+
+  render() {
+    return this.state.loading === true ? (
+      <div className="spinner-border text-success" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+    ) : (
+      <Router>
+      <Navigation />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/contacto" component={Contact} />
+            <PrivateRoute
+              path="/reserva"
+              authenticated={this.state.authenticated}
+              component={Reservation}
+            />
+            <PublicRoute
+              path="/signup"
+              authenticated={this.state.authenticated}
+              component={SignUp}
+            />
+            <PublicRoute
+              path="/login"
+              authenticated={this.state.authenticated}
+              component={Login}
+            />
+          </Switch>
+          
+        </Router>
+      );
+  }
 }
 
 export default App;
