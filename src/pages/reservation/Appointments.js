@@ -218,13 +218,36 @@ export default class Demo extends React.PureComponent {
       if (added) {
         const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
         data = [...data, { id: startingAddedId, ...added }];
+      data.forEach((element) => {
+        element.timestamp ? 
+        db.ref("reservas/" + element.timestamp).set({
+          date: moment(element.startDate).format("DD MMMM yyyy"),
+          start: moment(element.startDate).format("DD MMMM yyyy HH:mm"),
+          end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
+          timestamp: element.timestamp,
+          uid: this.state.user.uid,
+          email: this.state.user.email,
+          pista: `${'Pista'} ${element.priorityId}`,
+          priorityId: element.priorityId,
+        }) : 
+        db.ref("reservas/" + element.id).set({
+          date: moment(element.startDate).format("DD MMMM yyyy"),
+          start: moment(element.startDate).format("DD MMMM yyyy HH:mm"),
+          end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
+          timestamp: element.id,
+          uid: this.state.user.uid,
+          email: this.state.user.email,
+          pista: `${'Pista'} ${element.priorityId}`,
+          priorityId: element.priorityId,
+        })
+      });
         console.log('added', data)
       }
       if (changed) {
         data = data.map(appointment => (
           changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
           data.forEach((element) => {
-            db.ref("reservas/" + element.timestamp).set({
+            db.ref("reservas/" + element.timestamp).update({
                 date: moment(element.startDate).format("DD MMMM yyyy"),
                 start: moment(element.startDate).format("DD MMMM yyyy HH:mm"),
                 end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
@@ -237,9 +260,11 @@ export default class Demo extends React.PureComponent {
              });
       }
       if (deleted !== undefined) {
+        let deleted = db.ref("reservas/" + this.state.editingAppointment.id)
+        deleted.remove()
         data = data.filter(appointment => appointment.id !== deleted);
-        console.log('deleted', data)
       }
+      
       console.log('all data', data)
       return { data };
     });

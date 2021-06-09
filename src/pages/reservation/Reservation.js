@@ -150,7 +150,6 @@ export default class Reservations extends Component {
   }
 
   render() {  
-    console.log(this.state)  
     return (
       <div className="reserva">
         <div className="date">
