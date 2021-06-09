@@ -66,6 +66,7 @@ export default class Reservations extends Component {
           date: moment().format("DD MMMM yyyy"),
           start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
           end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
+          timestamp: Date.now()
         });
       });
     } catch (error) {
@@ -134,11 +135,11 @@ export default class Reservations extends Component {
   async handleSubmit(event, timestamp) {
     this.setState({ writeError: null });
     try {
-      await db.ref("reservas/" + Date.now()).set({
+      await db.ref("reservas/" + this.state.timestamp).set({
         date: this.state.date,
         start: this.state.start,
         end: this.state.end,
-        timestamp: Date.now(),
+        timestamp: this.state.timestamp,
         uid: this.state.user.uid,
         email: this.state.user.email,
         pista: this.state.pista,
