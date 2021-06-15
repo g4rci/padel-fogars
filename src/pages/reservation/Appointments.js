@@ -1,6 +1,8 @@
 import * as React from 'react';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { ViewState, EditingState, GroupingState, IntegratedGrouping, IntegratedEditing,} from '@devexpress/dx-react-scheduler';
 import {
@@ -17,7 +19,8 @@ import {
   TodayButton,
   EditRecurrenceMenu,
   ConfirmationDialog,
-  AppointmentForm
+  AppointmentForm,
+  AllDayPanel
 } from '@devexpress/dx-react-scheduler-material-ui';
 import IconButton from '@material-ui/core/IconButton';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -156,6 +159,76 @@ const GroupOrderSwitcher = withStyles(styles, { name: 'ResourceSwitcher' })(
   ),
 );
 
+const messages = {
+  moreInformationLabel: '',
+};
+
+const TextEditor = (props) => {
+  // eslint-disable-next-line react/destructuring-assignment
+  if (props.type === 'multilineTextEditor') {
+    return null;
+  } return <AppointmentForm.TextEditor {...props} />;
+};
+
+const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+  console.log('appointmentData', appointmentData)
+  
+
+  return (
+    <AppointmentForm.BasicLayout
+      appointmentData={appointmentData}
+      onFieldChange={onFieldChange}
+      {...restProps}
+    > 
+    </AppointmentForm.BasicLayout>
+  );
+};
+
+const allDayLocalizationMessages = {
+  'sp-SP': {
+    allDay: 'Todo El Dia',
+  },
+  'de-GR': {
+    allDay: 'Ganztägig',
+  },
+  'en-US': {
+    allDay: 'All Day',
+  },
+};
+
+const getAllDayMessages = locale => allDayLocalizationMessages[locale];
+
+const styles2 = theme => ({
+  container: {
+    display: 'flex',
+    marginBottom: theme.spacing(2),
+    justifyContent: 'flex-end',
+  },
+  text: {
+    ...theme.typography.h6,
+    marginRight: theme.spacing(2),
+  },
+});
+
+const LocaleSwitcher = withStyles(styles2, { name: 'LocaleSwitcher' })(
+  ({ onLocaleChange, currentLocale, classes }) => (
+    <div className={classes.container}>
+      <div className={classes.text}>
+        Idioma:
+      </div>
+      <TextField
+        select
+        value={currentLocale}
+        onChange={onLocaleChange}
+      >
+        <MenuItem value="sp-SP">Español (Spanish)</MenuItem>
+        <MenuItem value="de-GR">Deutsch (German)</MenuItem>
+        <MenuItem value="en-US">English (United States)</MenuItem>
+      </TextField>
+    </div>
+  ),
+);
+
 
 export default class Demo extends React.PureComponent {
     constructor(props) {
@@ -164,6 +237,7 @@ export default class Demo extends React.PureComponent {
             user: auth().currentUser,
             data: [],
             currentDate: moment(),
+            locale: 'sp-SP',
             resources: [{
               fieldName: 'priorityId',
               title: 'Pista',
@@ -178,6 +252,7 @@ export default class Demo extends React.PureComponent {
             appointmentChanges: {},
             editingAppointment: undefined,
         };
+        this.changeLocale = event => this.setState({ locale: event.target.value });
         this.currentDateChange = (currentDate) => { this.setState({ currentDate }); 
         this.myRef = React.createRef();
     };
@@ -196,13 +271,10 @@ export default class Demo extends React.PureComponent {
   }
 
   changeAddedAppointment(addedAppointment) {
-    this.setState({ 
-      addedAppointment
-    });
+    this.setState({ addedAppointment });
   }
 
   changeAppointmentChanges(appointmentChanges) {
-
     this.setState({ appointmentChanges });
   }
 
@@ -229,6 +301,7 @@ export default class Demo extends React.PureComponent {
           email: this.state.user.email,
           pista: `${'Pista'} ${element.priorityId}`,
           priorityId: element.priorityId,
+          rRule: element.rRule
         }) : 
         db.ref("reservas/" + element.id).set({
           date: moment(element.startDate).format("DD MMMM yyyy"),
@@ -239,6 +312,7 @@ export default class Demo extends React.PureComponent {
           email: this.state.user.email,
           pista: `${'Pista'} ${element.priorityId}`,
           priorityId: element.priorityId,
+          rRule: element.rRule
         })
       });
         console.log('added', data)
@@ -256,6 +330,7 @@ export default class Demo extends React.PureComponent {
                 email: element.title,
                 pista: `${'Pista'} ${element.priorityId}`,
                 priorityId: element.priorityId,
+                rRule: element.rRule
               })
              });
       }
@@ -289,7 +364,8 @@ export default class Demo extends React.PureComponent {
                         id: res.timestamp,
                         priorityId: res.priorityId,
                         timestamp: res.timestamp,
-                        uid: res.uid
+                        uid: res.uid,
+                        rRule: res.rRule
                     })
                 })
                 this.setState({reservations})
@@ -320,15 +396,20 @@ export default class Demo extends React.PureComponent {
     
     
     render() {
-      console.log(this.state)
-        const { data, resources, currentDate, grouping, groupByDate, isGroupByDate, addedAppointment, appointmentChanges, editingAppointment} = this.state;
+      console.log('state', this.state)
+        const { data, locale, resources, currentDate, grouping, groupByDate, isGroupByDate, addedAppointment, appointmentChanges, editingAppointment} = this.state;
         // const { data } = this.state;
         return (
           <React.Fragment>
         <GroupOrderSwitcher isGroupByDate={isGroupByDate} onChange={this.onGroupOrderChange} />
+        <LocaleSwitcher
+          currentLocale={locale}
+          onLocaleChange={this.changeLocale}
+        />
             <Paper>
         <Scheduler
           data={data}
+          locale={locale}
           height={'100%'}
         >
         <ViewState
@@ -360,6 +441,9 @@ export default class Demo extends React.PureComponent {
         <Appointments
             appointmentComponent={Appointment}
         />
+        <AllDayPanel
+              messages={getAllDayMessages(locale)}
+            />
         <Resources
               data={resources}
               mainResourceName="priorityId"
@@ -374,7 +458,11 @@ export default class Demo extends React.PureComponent {
             commandButtonComponent={CommandButton}
             showCloseButton
           />
-           <AppointmentForm />
+           <AppointmentForm
+            basicLayoutComponent={BasicLayout}
+            textEditorComponent={TextEditor}
+            messages={messages}
+          />
             <ViewSwitcher />
             <GroupingPanel />
             {/* <DragDropProvider /> */}
