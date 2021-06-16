@@ -20,7 +20,7 @@ import {
   EditRecurrenceMenu,
   ConfirmationDialog,
   AppointmentForm,
-  AllDayPanel
+  DragDropProvider
 } from '@devexpress/dx-react-scheduler-material-ui';
 import IconButton from '@material-ui/core/IconButton';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -171,9 +171,6 @@ const TextEditor = (props) => {
 };
 
 const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-  console.log('appointmentData', appointmentData)
-  
-
   return (
     <AppointmentForm.BasicLayout
       appointmentData={appointmentData}
@@ -184,19 +181,19 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
   );
 };
 
-const allDayLocalizationMessages = {
-  'sp-SP': {
-    allDay: 'Todo El Dia',
-  },
-  'de-GR': {
-    allDay: 'Ganztägig',
-  },
-  'en-US': {
-    allDay: 'All Day',
-  },
-};
+// const allDayLocalizationMessages = {
+//   'sp-SP': {
+//     allDay: 'Todo El Dia',
+//   },
+//   'de-GR': {
+//     allDay: 'Ganztägig',
+//   },
+//   'en-US': {
+//     allDay: 'All Day',
+//   },
+// };
 
-const getAllDayMessages = locale => allDayLocalizationMessages[locale];
+// const getAllDayMessages = locale => allDayLocalizationMessages[locale];
 
 const styles2 = theme => ({
   container: {
@@ -228,6 +225,8 @@ const LocaleSwitcher = withStyles(styles2, { name: 'LocaleSwitcher' })(
     </div>
   ),
 );
+
+const message = (messageKey ) => "HOY"
 
 
 export default class Demo extends React.PureComponent {
@@ -301,7 +300,7 @@ export default class Demo extends React.PureComponent {
           email: this.state.user.email,
           pista: `${'Pista'} ${element.priorityId}`,
           priorityId: element.priorityId,
-          rRule: element.rRule
+          rRule: element.rRule ? element.rRule : ""
         }) : 
         db.ref("reservas/" + element.id).set({
           date: moment(element.startDate).format("DD MMMM yyyy"),
@@ -312,10 +311,9 @@ export default class Demo extends React.PureComponent {
           email: this.state.user.email,
           pista: `${'Pista'} ${element.priorityId}`,
           priorityId: element.priorityId,
-          rRule: element.rRule
+          rRule: element.rRule ? element.rRule : ""
         })
       });
-        console.log('added', data)
       }
       if (changed) {
         data = data.map(appointment => (
@@ -330,7 +328,7 @@ export default class Demo extends React.PureComponent {
                 email: element.title,
                 pista: `${'Pista'} ${element.priorityId}`,
                 priorityId: element.priorityId,
-                rRule: element.rRule
+                rRule: element.rRule ? element.rRule : ""
               })
              });
       }
@@ -340,7 +338,6 @@ export default class Demo extends React.PureComponent {
         data = data.filter(appointment => appointment.id !== deleted);
       }
       
-      console.log('all data', data)
       return { data };
     });
   } 
@@ -396,7 +393,6 @@ export default class Demo extends React.PureComponent {
     
     
     render() {
-      console.log('state', this.state)
         const { data, locale, resources, currentDate, grouping, groupByDate, isGroupByDate, addedAppointment, appointmentChanges, editingAppointment} = this.state;
         // const { data } = this.state;
         return (
@@ -437,13 +433,12 @@ export default class Demo extends React.PureComponent {
           <MonthView />
          <Toolbar />
           <DateNavigator />
-          <TodayButton />
+          <TodayButton
+          getMessage={message} />
         <Appointments
             appointmentComponent={Appointment}
         />
-        <AllDayPanel
-              messages={getAllDayMessages(locale)}
-            />
+        
         <Resources
               data={resources}
               mainResourceName="priorityId"
@@ -465,7 +460,7 @@ export default class Demo extends React.PureComponent {
           />
             <ViewSwitcher />
             <GroupingPanel />
-            {/* <DragDropProvider /> */}
+            <DragDropProvider />
         </Scheduler>
       </Paper>
       </React.Fragment>

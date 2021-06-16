@@ -63,11 +63,19 @@ export default class Reservations extends Component {
         firstAvaliableHour = hours;
         this.setState({
           reservations,
+          rRule: "",
           date: moment().format("DD MMMM yyyy"),
           start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
           end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
           timestamp: Date.now()
         });
+        reservations.forEach((res) => {
+          console.log('res', new Date(res.date))
+          console.log(new Date(this.state.date))
+          if ( new Date(res.date) < new Date(this.state.date) && res.rRule === ""){
+            db.ref("reservas/" + res.timestamp).remove()
+          }
+        })
       });
     } catch (error) {
       this.setState({ readError: error.message });
@@ -144,6 +152,7 @@ export default class Reservations extends Component {
         email: this.state.user.email,
         pista: this.state.pista,
         priorityId: this.state.priorityId,
+        rRule: this.state.rRule
       });
     } catch (error) {
       this.setState({ writeError: error.message });
