@@ -70,9 +70,7 @@ export default class Reservations extends Component {
           timestamp: Date.now()
         });
         reservations.forEach((res) => {
-          console.log('res', new Date(res.date))
-          console.log(new Date(this.state.date))
-          if ( new Date(res.date) < new Date(this.state.date) && res.rRule === ""){
+          if ( new Date(res.end) < new Date() && res.rRule === ""){
             db.ref("reservas/" + res.timestamp).remove()
           }
         })
@@ -182,7 +180,7 @@ export default class Reservations extends Component {
                   onChange={this.handleDateChange}
                   onClick={this.changeHours()}
                   onError={console.log}
-                  disablePast
+                  //disablePast
                   format="DD MMMM yyyy"
                   minutesStep={15}
                   autoOk={true}

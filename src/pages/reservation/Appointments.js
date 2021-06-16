@@ -152,7 +152,7 @@ const GroupOrderSwitcher = withStyles(styles, { name: 'ResourceSwitcher' })(
       control={
         <Checkbox checked={isGroupByDate} onChange={onChange} color="primary" />
       }
-      label="Group by Date First"
+      label="Grupo por Fecha Primero"
       className={classes.formControlLabel}
       classes={{ label: classes.text }}
     />
@@ -161,6 +161,26 @@ const GroupOrderSwitcher = withStyles(styles, { name: 'ResourceSwitcher' })(
 
 const messages = {
   moreInformationLabel: '',
+  detailsLabel: "Detalles", 
+  commitCommand: "GUARDAR",
+  repeatLabel: "Repetir",
+  never: "Nunca",
+  daily: "Diario",
+  weekly: "Semanal",
+  monthly: "Mensual",
+  yearly: "Anual",
+  repeatEveryLabel: "Repatir Cada",
+  daysLabel: "Dias(s)",
+  endRepeatLabel: "Finalizar Repeticion",
+  onLabel: "En",
+  afterLabel: "Hasta",
+  occurrencesLabel: "Veces",
+  weeksOnLabel: "Semana(s)",
+  monthsLabel: "Mes(es)",
+  ofEveryMonthLabel: "De cada Mes",
+  theLabel: "De",
+  allDayLabel: "Todo el Dia"
+
 };
 
 const TextEditor = (props) => {
@@ -182,7 +202,7 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
 };
 
 // const allDayLocalizationMessages = {
-//   'sp-SP': {
+//   'es-ES': {
 //     allDay: 'Todo El Dia',
 //   },
 //   'de-GR': {
@@ -218,7 +238,7 @@ const LocaleSwitcher = withStyles(styles2, { name: 'LocaleSwitcher' })(
         value={currentLocale}
         onChange={onLocaleChange}
       >
-        <MenuItem value="sp-SP">Español (Spanish)</MenuItem>
+        <MenuItem value="es-ES">Español (Spanish)</MenuItem>
         <MenuItem value="de-GR">Deutsch (German)</MenuItem>
         <MenuItem value="en-US">English (United States)</MenuItem>
       </TextField>
@@ -236,7 +256,7 @@ export default class Demo extends React.PureComponent {
             user: auth().currentUser,
             data: [],
             currentDate: moment(),
-            locale: 'sp-SP',
+            locale: 'es-ES',
             resources: [{
               fieldName: 'priorityId',
               title: 'Pista',
@@ -397,11 +417,11 @@ export default class Demo extends React.PureComponent {
         // const { data } = this.state;
         return (
           <React.Fragment>
-        <GroupOrderSwitcher isGroupByDate={isGroupByDate} onChange={this.onGroupOrderChange} />
         <LocaleSwitcher
           currentLocale={locale}
           onLocaleChange={this.changeLocale}
         />
+        <GroupOrderSwitcher isGroupByDate={isGroupByDate} onChange={this.onGroupOrderChange} />
             <Paper>
         <Scheduler
           data={data}
@@ -427,14 +447,18 @@ export default class Demo extends React.PureComponent {
             />
           
           <WeekView
+            firstDayOfWeek="1"
+            displayName="SEMANA"
             startDayHour={9}
-            endDayHour={21}
+            endDayHour={23}
           />
-          <MonthView />
+          <MonthView 
+            displayName="MES"
+          />
          <Toolbar />
-          <DateNavigator />
-          <TodayButton
-          getMessage={message} />
+          <DateNavigator
+           />
+          
         <Appointments
             appointmentComponent={Appointment}
         />
