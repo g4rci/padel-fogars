@@ -147,7 +147,7 @@ export default class Reservations extends Component {
         end: this.state.end,
         timestamp: this.state.timestamp,
         uid: this.state.user.uid,
-        email: this.state.user.email,
+        email: "Reservada",
         pista: this.state.pista,
         priorityId: this.state.priorityId,
         rRule: this.state.rRule
@@ -180,7 +180,7 @@ export default class Reservations extends Component {
                   onChange={this.handleDateChange}
                   onClick={this.changeHours()}
                   onError={console.log}
-                  //disablePast
+                  disablePast
                   format="DD MMMM yyyy"
                   minutesStep={15}
                   autoOk={true}

@@ -17,8 +17,9 @@ class Navigation extends React.Component {
             {auth().currentUser ? (
               <Nav className="mr-auto">
                 <Nav.Link href="/contacto">Contacto</Nav.Link>
-                <Nav.Link href="/topshows">Tarifas</Nav.Link>
                 <Nav.Link href="/reserva">Reserva</Nav.Link>
+                <Nav.Link href="/tarifas">Tarifas</Nav.Link>
+                <Nav.Link href="/misreservas">Mis Reservas</Nav.Link>
               </Nav>
             ) : (
               <Nav className="mr-auto">

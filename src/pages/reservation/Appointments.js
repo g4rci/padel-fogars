@@ -62,13 +62,17 @@ const style = ({ palette }) => ({
     backgroundColor: "rgba(255,255,255,0.65)",
   },
   pista1: {
-    backgroundColor: "#FE1902",
+    backgroundColor: "red",
     borderRadius: "8px",
   },
   pista2: {
-    backgroundColor: "#E7C207",
+    backgroundColor: "orange",
     borderRadius: "8px",
   },
+  clase:{
+    backgroundColor: "magenta",
+    borderRadius: "8px",
+  }
 });
 
 const getClassByLocation = (classes, location) => {
@@ -76,9 +80,10 @@ const getClassByLocation = (classes, location) => {
   return classes.secondRoom;
 };
 
-const getClassByLocation2 = (classes, location) => {
-  if (location === "Pista 1") return classes.pista1;
-  return classes.pista2;
+const getClassByLocation2 = (classes, location, title) => {
+  if (location === "Pista 1" && title !== "Clase" && title !== "clase") return classes.pista1;
+  if (location === "Pista 2" && title !== "Clase" && title !== "clase") return classes.pista2;
+  if( title === "Clase" || "clase") return classes.clase
 };
 
 const Header = withStyles(style, { name: "Header" })(
@@ -107,7 +112,7 @@ const Appointment = withStyles(style, { name: "Appointments" })(
     <Appointments.Appointment
       data={data}
       {...restProps}
-      className={classNames(getClassByLocation2(classes, data.location))}
+      className={classNames(getClassByLocation2(classes, data.location, data.title))}
     >
       {children}
     </Appointments.Appointment>
@@ -146,7 +151,7 @@ const isWeekOrMonthView = (viewName) =>
 
 const priorityData = [
   { text: "Pista 1", id: 1, color: "lightBlue" },
-  { text: "Pista 2", id: 2, color: "green" },
+  { text: "Pista 2", id: 2, color: "lightGreen" },
 ];
 
 const styles = ({ spacing, palette, typography }) => ({
@@ -226,6 +231,7 @@ const TextEditor = (props) => {
 };
 
 const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+  console.log(appointmentData)
   return (
     <AppointmentForm.BasicLayout
       appointmentData={appointmentData}
@@ -234,53 +240,6 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     ></AppointmentForm.BasicLayout>
   );
 };
-
-// const allDayLocalizationMessages = {
-//   'es-ES': {
-//     allDay: 'Todo El Dia',
-//   },
-//   'de-GR': {
-//     allDay: 'Ganztägig',
-//   },
-//   'en-US': {
-//     allDay: 'All Day',
-//   },
-// };
-
-// const getAllDayMessages = locale => allDayLocalizationMessages[locale];
-
-// const styles2 = theme => ({
-//   container: {
-//     display: 'flex',
-//     marginBottom: theme.spacing(2),
-//     justifyContent: 'flex-end',
-//   },
-//   text: {
-//     ...theme.typography.h6,
-//     marginRight: theme.spacing(2),
-//   },
-// });
-
-// const LocaleSwitcher = withStyles(styles2, { name: 'LocaleSwitcher' })(
-//   ({ onLocaleChange, currentLocale, classes }) => (
-//     <div className={classes.container}>
-//       <div className={classes.text}>
-//         Idioma:
-//       </div>
-//       <TextField
-//         select
-//         value={currentLocale}
-//         onChange={onLocaleChange}
-//       >
-//         <MenuItem value="es-ES">Español (Spanish)</MenuItem>
-//         <MenuItem value="de-GR">Deutsch (German)</MenuItem>
-//         <MenuItem value="en-US">English (United States)</MenuItem>
-//       </TextField>
-//     </div>
-//   ),
-// );
-
-// const message = (messageKey ) => "HOY"
 
 export default class Demo extends React.PureComponent {
   constructor(props) {
@@ -355,7 +314,7 @@ export default class Demo extends React.PureComponent {
                 end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
                 timestamp: element.timestamp,
                 uid: this.state.user.uid,
-                email: this.state.user.email,
+                email: element.title ? element.title : "Reservada",
                 pista: `${"Pista"} ${element.priorityId}`,
                 priorityId: element.priorityId,
                 rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
@@ -366,7 +325,7 @@ export default class Demo extends React.PureComponent {
                 end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
                 timestamp: element.id,
                 uid: this.state.user.uid,
-                email: this.state.user.email,
+                email: element.title ? element.title : "Reservada",
                 pista: `${"Pista"} ${element.priorityId}`,
                 priorityId: element.priorityId,
                 rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
@@ -386,7 +345,7 @@ export default class Demo extends React.PureComponent {
             end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
             timestamp: element.timestamp,
             uid: element.uid,
-            email: element.title,
+            email: element.title ? element.title : "Reservada",
             pista: `${"Pista"} ${element.priorityId}`,
             priorityId: element.priorityId,
             rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
@@ -469,10 +428,6 @@ export default class Demo extends React.PureComponent {
     } = this.state;
     return (
       <React.Fragment>
-        {/* <LocaleSwitcher
-          currentLocale={locale}
-          onLocaleChange={this.changeLocale}
-        /> */}
         <GroupOrderSwitcher
           isGroupByDate={isGroupByDate}
           onChange={this.onGroupOrderChange}
@@ -499,7 +454,10 @@ export default class Demo extends React.PureComponent {
               startDayHour={9}
               endDayHour={23}
             />
-            <MonthView displayName="MES" />
+            <MonthView 
+              displayName="MES" 
+              firstDayOfWeek="1"
+            />
             <Toolbar />
             <DateNavigator />
             <TodayButton messages={messages}/>

@@ -12,6 +12,7 @@ import Home from "./pages/home/Home";
 import Navigation from './components/navbar/Navbar';
 import Contact from './pages/contact/Contact';
 import Reservation from './pages/reservation/Reservation'
+import Personal from './pages/personal/Personal'
 
 function PrivateRoute({ component: Component, authenticated, ...rest }) {
   return (
@@ -95,6 +96,11 @@ class App extends Component {
               path="/login"
               authenticated={this.state.authenticated}
               component={Login}
+            />
+            <PrivateRoute
+              path="/misreservas"
+              authenticated={this.state.authenticated}
+              component={Personal}
             />
           </Switch>
           
