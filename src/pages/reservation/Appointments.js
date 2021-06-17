@@ -358,7 +358,7 @@ export default class Demo extends React.PureComponent {
                 email: this.state.user.email,
                 pista: `${"Pista"} ${element.priorityId}`,
                 priorityId: element.priorityId,
-                rRule: element.rRule ? element.rRule : "",
+                rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
               })
             : db.ref("reservas/" + element.id).set({
                 date: moment(element.startDate).format("DD MMMM yyyy"),
@@ -369,7 +369,7 @@ export default class Demo extends React.PureComponent {
                 email: this.state.user.email,
                 pista: `${"Pista"} ${element.priorityId}`,
                 priorityId: element.priorityId,
-                rRule: element.rRule ? element.rRule : "",
+                rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
               });
         });
       }
@@ -389,7 +389,7 @@ export default class Demo extends React.PureComponent {
             email: element.title,
             pista: `${"Pista"} ${element.priorityId}`,
             priorityId: element.priorityId,
-            rRule: element.rRule ? element.rRule : "",
+            rRule: element.rRule ? element.rRule : "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
           });
         });
       }

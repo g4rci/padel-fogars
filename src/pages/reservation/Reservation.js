@@ -63,14 +63,14 @@ export default class Reservations extends Component {
         firstAvaliableHour = hours;
         this.setState({
           reservations,
-          rRule: "",
+          rRule: "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
           date: moment().format("DD MMMM yyyy"),
           start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
           end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
           timestamp: Date.now()
         });
         reservations.forEach((res) => {
-          if ( new Date(res.end) < new Date() && res.rRule === ""){
+          if ( new Date(res.end) < new Date() && res.rRule === "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1"){
             db.ref("reservas/" + res.timestamp).remove()
           }
         })
