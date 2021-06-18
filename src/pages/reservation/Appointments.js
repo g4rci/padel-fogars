@@ -313,7 +313,7 @@ export default class Demo extends React.PureComponent {
                 start: moment(element.startDate).format("DD MMMM yyyy HH:mm"),
                 end: moment(element.endDate).format("DD MMMM yyyy HH:mm"),
                 timestamp: element.timestamp,
-                uid: this.state.user.uid,
+                uid: element.uid,
                 email: element.title ? element.title : "Reservada",
                 pista: `${"Pista"} ${element.priorityId}`,
                 priorityId: element.priorityId,

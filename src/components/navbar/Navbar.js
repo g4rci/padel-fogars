@@ -31,7 +31,12 @@ class Navigation extends React.Component {
             )}
             
           </Navbar.Collapse>
-        </Navbar>
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                Bienvenido: <a href="misreservas">{auth().currentUser.email}</a>
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
       </div>
     );
   }
