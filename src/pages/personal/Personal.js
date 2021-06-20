@@ -33,12 +33,13 @@ export default function Personal() {
         
         console.log(reservations);  
         return reserva.length > 0 ? (
-          <div>
-            <Row xs={1} md={5} className="justify-content-md-around">
+          <div className="reserva">
+          <div className="date">
+            <Row xs={1} md={5} className="justify-content-md-center m-3">
               {reserva.map((e) => {
                 return (
                   auth().currentUser.uid === e.uid && (
-                    <Card className="m-3">
+                    <Card className="mt-3 mb-3">
                       <Card.Body>
                         {(() => {
                           if (e.email === "clase" || e.email === "Clase") {
@@ -80,10 +81,12 @@ export default function Personal() {
               })}
             </Row>
           </div>
+          </div>
         ) : (
-          <div>
-            <Row xs={1} md={3} className="justify-content-md-center">
-              <Card className="m-3">
+          <div className="reserva">
+          <div className="date">
+            <Row xs={1} md={5} className="justify-content-md-center m-3">
+              <Card className="mt-3 mb-3">
               <Card.Img variant="top" src="pala1.jpg" />
                 <Card.Body>
                   <Card.Title>No tienes pistas reservadas</Card.Title>
@@ -94,6 +97,7 @@ export default function Personal() {
                 </Card.Body>
               </Card>
             </Row>
+          </div>
           </div>
         );
 }

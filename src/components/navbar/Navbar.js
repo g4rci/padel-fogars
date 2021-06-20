@@ -1,13 +1,40 @@
 import React from "react";
-import { auth } from "../../services/firebase";
+import { auth, db } from "../../services/firebase";
 import { Nav } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import { withRouter } from "react-router-dom";
 
+
+
 class Navigation extends React.Component {
-  
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: []
+    }
+  }
+
+  async componentDidMount() {
+    try{
+      let usuarios = [];
+      let user = []
+      db.ref("usuarios").on("value", (snapshot) => {
+        snapshot.forEach((snap) => {
+          usuarios.push(snap.val());
+          user = usuarios.filter((usuarios) => usuarios.email === auth().currentUser.email);
+          console.log(user)
+          this.setState({
+            user: user
+          })
+        });
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   render() {
+    console.log(this.state)
     return (
       <div className="navBar">
         <Navbar bg="dark" variant="dark" expand="lg">
@@ -29,13 +56,15 @@ class Navigation extends React.Component {
                 <Nav.Link href="/login">Tarifas</Nav.Link>
               </Nav>
             )}
-            
-          </Navbar.Collapse>
-            <Navbar.Collapse className="justify-content-end">
+            {auth().currentUser && 
+              <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>
-                Bienvenido: <a href="misreservas">{auth().currentUser.email}</a>
+                Bienvenido: <a href="misreservas">{ this.state.user[0] && this.state.user[0].nick }</a>
               </Navbar.Text>
             </Navbar.Collapse>
+            }
+          </Navbar.Collapse>
+            
           </Navbar>
       </div>
     );
