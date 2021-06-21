@@ -22,7 +22,6 @@ class Navigation extends React.Component {
         snapshot.forEach((snap) => {
           usuarios.push(snap.val());
           user = usuarios.filter((usuarios) => usuarios.email === auth().currentUser.email);
-          console.log(user)
           this.setState({
             user: user
           })
@@ -34,7 +33,6 @@ class Navigation extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <div className="navBar">
         <Navbar bg="dark" variant="dark" expand="lg">

@@ -39,7 +39,6 @@ export default class Reservations extends Component {
 
   async componentDidMount() {
     this.setState({ readError: null });
-    this.changeHours();
     try {
       db.ref("reservas").on("value", (snapshot) => {
         let reservations = [];
@@ -50,17 +49,6 @@ export default class Reservations extends Component {
         reservations.sort(function (a, b) {
           return a.timestamp - b.timestamp;
         });
-        let reservedHours = [];
-        // eslint-disable-next-line array-callback-return
-        reservations.filter((f) => {
-          if (f.date === this.state.date && f.pista === this.state.pista) {
-            reservedHours.push(f.start.slice(-5));
-          }
-        });
-        let hours = [ "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
-
-        hours = hours.filter((item) => !reservedHours.includes(item));
-        firstAvaliableHour = hours;
         this.setState({
           reservations,
           rRule: "RRULE:INTERVAL=1;FREQ=DAILY;COUNT=1",
@@ -80,22 +68,8 @@ export default class Reservations extends Component {
     }
   }
 
-  changeHours() {
-    let reservedHours = [];
-    // eslint-disable-next-line array-callback-return
-    this.state.reservations.filter((f) => {
-      if (f.date === this.state.date && f.pista === this.state.pista) {
-        reservedHours.push(f.start.slice(-5));
-      }
-    });
-    let hours = [ "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
-
-    hours = hours.filter((item) => !reservedHours.includes(item));
-    firstAvaliableHour = hours;
-  }
-
   handleDateChange(event, date) {
-    this.changeHours();
+    //this.changeHours();
     this.setState({
       date: moment(date).format("DD MMMM yyyy"),
       start: `${moment(date).format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
@@ -110,26 +84,54 @@ export default class Reservations extends Component {
   }
 
    handlePistChange(event) {
-    this.setState({
-      pista: event.target.value,
-      priorityId: event.target.value === "Pista 1" ? 1 : 2,
-      start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
-      end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
-    });
-  }
-
-  handleAvaliableField(event) {
     let reservedHours = [];
-    let startHour = `${moment(this.state.date).format("DD MMMM yyyy")} ${event.target.value}`;
     // eslint-disable-next-line array-callback-return
     this.state.reservations.filter((f) => {
       if (f.date === this.state.date && f.pista === this.state.pista) {
         reservedHours.push(f.start.slice(-5));
       }
     });
-    let hours = [ "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00" ];
+    let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
+    
+    // eslint-disable-next-line array-callback-return
+    reservedHours.map((el) => {
+      let h = []
+        h = (hours.filter((e) => e.slice(0,2) === el.slice(0,2) )) 
+        reservedHours = reservedHours.concat(h)
+      })
+      
+      firstAvaliableHour = hours.filter((item) =>  !reservedHours.includes(item))
 
-    firstAvaliableHour = hours.filter((item) => !reservedHours.includes(item));
+    this.setState({
+      firstAvaliableHour: firstAvaliableHour,
+      pista: event.target.value,
+      priorityId: event.target.value === "Pista 1" ? 1 : 2,
+      start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
+      end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
+    });
+    
+  }
+
+  handleAvaliableField(event) {
+    let reservedHours = [];
+    let startHour = `${moment(this.state.date).format("DD MMMM yyyy")} ${event.target.value}`;
+    // eslint-disable-next-line array-callback-return
+    let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
+    // eslint-disable-next-line array-callback-return
+    this.state.reservations.filter((f) => {
+      if (f.date === this.state.date && f.pista === this.state.pista) {
+        reservedHours.push(f.start.slice(-5));
+      }
+    });
+
+    // eslint-disable-next-line array-callback-return
+        reservedHours.map((el) => {
+          let h = []
+            h = (hours.filter((e) => e.slice(0,2) === el.slice(0,2) )) 
+            reservedHours = reservedHours.concat(h)
+          })
+          
+          firstAvaliableHour = hours.filter((item) =>  !reservedHours.includes(item))
 
     this.setState({
       reserved: reservedHours,
@@ -178,30 +180,20 @@ export default class Reservations extends Component {
                   label="Selecciona Fecha"
                   value={this.state.date}
                   onChange={this.handleDateChange}
-                  onClick={this.changeHours()}
+                  //onClick={this.changeHours()}
                   onError={console.log}
                   disablePast
                   format="DD MMMM yyyy"
                   minutesStep={15}
                   autoOk={true}
                 />
-                {/* <KeyboardTimePicker
-                    ampm={false}
-                    variant="inline"
-                    label="With keyboard"
-                    value={this.state.end}
-                    onChange={this.handleEndChange}
-                    disablePast
-                    minutesStep={15}
-                    autoOk={true}
-                  /> */}
               </>
             </MuiPickersUtilsProvider>
             <br></br>
             <br></br>
             <Form.Group style={{ width: "250px", margin: "auto" }}>
               <Form.Control
-                onChange={ (event) => { this.handlePistChange(event) ; this.changeHours()} }
+                onChange={ (event) => { this.handlePistChange(event) } }
                 size="sm"
                 as="select"
                 defaultValue="Selecciona Pista"

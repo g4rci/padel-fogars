@@ -31,7 +31,6 @@ export default function Personal() {
             //eslint-disable-next-line
         }, [])
         
-        console.log(reservations);  
         return reserva.length > 0 ? (
           <div className="reserva">
           <div className="date">
