@@ -2,14 +2,14 @@ import * as React from "react";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
+// import MenuItem from "@material-ui/core/MenuItem";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {
   ViewState,
   EditingState,
   GroupingState,
   IntegratedGrouping,
-  IntegratedEditing,
+  //IntegratedEditing,
 } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
@@ -101,6 +101,7 @@ const Header = withStyles(style, { name: "Header" })(
         onClick={() => alert(JSON.stringify(appointmentData))}
         className={classes.commandButton}
       >
+
         <MoreIcon />
       </IconButton>
     </AppointmentTooltip.Header>
@@ -413,18 +414,7 @@ export default class Demo extends React.PureComponent {
   }
 
   render() {
-    const {
-      data,
-      locale,
-      resources,
-      currentDate,
-      grouping,
-      groupByDate,
-      isGroupByDate,
-      addedAppointment,
-      appointmentChanges,
-      editingAppointment,
-    } = this.state;
+    const { data, locale, resources, currentDate, grouping, groupByDate, isGroupByDate, addedAppointment, appointmentChanges, editingAppointment } = this.state;
     return (
       <React.Fragment>
         <GroupOrderSwitcher

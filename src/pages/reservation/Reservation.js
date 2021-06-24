@@ -15,6 +15,7 @@ import moment from "moment";
 import "moment/locale/es";
 
 let firstAvaliableHour = ["09:00", "10:00"];
+let firstAvaliableHour2 = ["09:00", "10:00"];
 
 export default class Reservations extends Component {
   constructor(props) {
@@ -83,58 +84,89 @@ export default class Reservations extends Component {
     });
   }
 
-   handlePistChange(event) {
-    let reservedHours = [];
-    // eslint-disable-next-line array-callback-return
-    this.state.reservations.filter((f) => {
-      if (f.date === this.state.date && f.pista === this.state.pista) {
-        reservedHours.push(f.start.slice(-5));
+  // async componentDidUpdate(snapshot) {
+  //   if (this.state !== snapshot) {
+  //     try{
+  //       let reservedIntervals = []
+  //       let reservedHours = [];
+    
+  //       let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
+    
+  //       //eslint-disable-next-line array-callback-return
+  //       this.state.reservations.filter((f) => {
+  //         if (f.date === this.state.date && f.pista === this.state.pista) {
+  //           reservedHours.push(f.start.slice(-5));
+  //         }
+  //       });
+    
+  //       for(let i=0; i<hours.length; i++){
+  //         if(reservedHours.includes(hours[i])){
+  //         reservedIntervals.push(hours[i-1], hours[i], hours[i+1]);
+  //         }
+  //       }
+       
+  //      firstAvaliableHour = hours.filter((item) =>  !reservedIntervals.includes(item))
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  //}
+
+   async handlePistChange(event) {
+    if(event.target.value === "Pista 1"){
+      let reservedIntervals = []
+      let reservedHours = [];
+  
+      let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
+  
+      //eslint-disable-next-line array-callback-return
+      this.state.reservations.filter((f) => {
+        if (f.date === this.state.date && f.pista === "Pista 1") {
+          reservedHours.push(f.start.slice(-5));
+        }
+      });
+  
+      for(let i=0; i<hours.length; i++){
+        if(reservedHours.includes(hours[i])){
+        reservedIntervals.push(hours[i-1], hours[i], hours[i+1]);
+        }
       }
-    });
-    let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
-    
-    // eslint-disable-next-line array-callback-return
-    reservedHours.map((el) => {
-      let h = []
-        h = (hours.filter((e) => e.slice(0,2) === el.slice(0,2) )) 
-        reservedHours = reservedHours.concat(h)
-      })
-      
-      firstAvaliableHour = hours.filter((item) =>  !reservedHours.includes(item))
+     
+     firstAvaliableHour = hours.filter((item) =>  !reservedIntervals.includes(item))
+    }else{
+      let reservedIntervals = []
+      let reservedHours = [];
+  
+      let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
+  
+      //eslint-disable-next-line array-callback-return
+      this.state.reservations.filter((f) => {
+        if (f.date === this.state.date && f.pista === "Pista 2") {
+          reservedHours.push(f.start.slice(-5));
+        }
+      });
+  
+      for(let i=0; i<hours.length; i++){
+        if(reservedHours.includes(hours[i])){
+        reservedIntervals.push(hours[i-1], hours[i], hours[i+1]);
+        }
+      }
+     
+     firstAvaliableHour2 = hours.filter((item) =>  !reservedIntervals.includes(item))
+    }
 
-    this.setState({
-      firstAvaliableHour: firstAvaliableHour,
-      pista: event.target.value,
-      priorityId: event.target.value === "Pista 1" ? 1 : 2,
-      start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
-      end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
-    });
-    
-  }
+     this.setState({
+       pista: event.target.value,
+       priorityId: event.target.value === "Pista 1" ? 1 : 2,
+       start: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(0,1)}`,
+       end: `${moment().format("DD MMMM yyyy")} ${firstAvaliableHour.slice(1,2)}`,
+      });
+    }
 
-  handleAvaliableField(event) {
-    let reservedHours = [];
+  async handleAvaliableField(event) {
     let startHour = `${moment(this.state.date).format("DD MMMM yyyy")} ${event.target.value}`;
-    // eslint-disable-next-line array-callback-return
-    let hours = [ "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30" ];
-    // eslint-disable-next-line array-callback-return
-    this.state.reservations.filter((f) => {
-      if (f.date === this.state.date && f.pista === this.state.pista) {
-        reservedHours.push(f.start.slice(-5));
-      }
-    });
-
-    // eslint-disable-next-line array-callback-return
-        reservedHours.map((el) => {
-          let h = []
-            h = (hours.filter((e) => e.slice(0,2) === el.slice(0,2) )) 
-            reservedHours = reservedHours.concat(h)
-          })
-          
-          firstAvaliableHour = hours.filter((item) =>  !reservedHours.includes(item))
-
+    
     this.setState({
-      reserved: reservedHours,
       start: `${moment(this.state.date).format("DD MMMM yyyy")} ${event.target.value}`,
       end: `${moment(startHour).add("01:00:00").format("DD MMMM yyyy HH:mm")}`,
     });
@@ -191,9 +223,10 @@ export default class Reservations extends Component {
             </MuiPickersUtilsProvider>
             <br></br>
             <br></br>
-            <Form.Group style={{ width: "250px", margin: "auto" }}>
+            <Form.Group 
+            onChange={ (event) => { this.handlePistChange(event) } }
+            style={{ width: "250px", margin: "auto" }}>
               <Form.Control
-                onChange={ (event) => { this.handlePistChange(event) } }
                 size="sm"
                 as="select"
                 defaultValue="Selecciona Pista"
@@ -208,16 +241,23 @@ export default class Reservations extends Component {
               style={{ width: "250px", margin: "auto" }}
             >
               <Form.Control
-                onClick={this.handleAvaliableField}
                 size="sm"
                 as="select"
                 defaultValue="Selecciona hora..."
               > 
               <option>Selecciona hora...</option>
-                {firstAvaliableHour.map((t) => {
+              {this.state.pista === "Pista 1" ? 
+                firstAvaliableHour.map((t) => {
                   return (
                     <option>{t}</option>);
-                })}
+                })
+                :
+                firstAvaliableHour2.map((t) => {
+                  return (
+                    <option>{t}</option>);
+                })
+              }
+              
               </Form.Control>
             </Form.Group>
             {/* <Form.Group style={{ width: "250px", margin: "auto" }}>

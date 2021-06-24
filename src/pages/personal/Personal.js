@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from "react";
-import { Card, CardGroup, CardImg, Row } from "react-bootstrap";
+import { Card, Row } from "react-bootstrap";
 import { auth, db } from "../../services/firebase";
 
 let reservations = [];
@@ -34,11 +34,11 @@ export default function Personal() {
         return reserva.length > 0 ? (
           <div className="reserva">
           <div className="date">
-            <Row xs={1} md={5} className="justify-content-md-center m-3">
+            <Row xs={1} md={4} className="justify-content-md-around m-3 flex-wrap">
               {reserva.map((e) => {
                 return (
                   auth().currentUser.uid === e.uid && (
-                    <Card className="mt-3 mb-3">
+                    <Card className="mt-3 mb-3 flex-wrap">
                       <Card.Body>
                         {(() => {
                           if (e.email === "clase" || e.email === "Clase") {
@@ -66,10 +66,10 @@ export default function Personal() {
                           }
                         })()}
                         <Card.Title>{e.email}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">
+                        <Card.Subtitle className="m-2 text-muted">
                           {e.start}
                         </Card.Subtitle>
-                        <Card.Subtitle className="mb-2 text-muted">
+                        <Card.Subtitle className="m-2 text-muted">
                           {e.end}
                         </Card.Subtitle>
                         <Card.Text>{e.pista}</Card.Text>
